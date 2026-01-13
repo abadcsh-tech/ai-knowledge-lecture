@@ -818,6 +818,90 @@
             transform: translateX(5px);
         }
 
+        /* Comments Section */
+        .comments-section {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        .comment-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(41, 151, 255, 0.2);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 980px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(41, 151, 255, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .form-note {
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
         /* Footer */
         footer {
             background: var(--bg-secondary);
@@ -891,6 +975,7 @@
             <li><a href="#tools">도구</a></li>
             <li><a href="#workflow">워크플로우</a></li>
             <li><a href="#instructor">강사</a></li>
+            <li><a href="#comments">질문</a></li>
         </ul>
     </nav>
 
@@ -1159,6 +1244,30 @@
                 </ul>
             </div>
         </div>
+    </section>
+
+    <!-- Comments Section -->
+    <section class="comments-section" id="comments">
+        <div class="section-title animate-on-scroll">
+            <h2>질문 & 댓글</h2>
+            <p>강의에 대해 궁금한 점이나 의견을 남겨주세요</p>
+        </div>
+        <form class="comment-form animate-on-scroll" action="https://formspree.io/f/xpwzgkvq" method="POST">
+            <div class="form-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="message">질문 또는 댓글</label>
+                <textarea id="message" name="message" placeholder="강의에 대한 질문이나 의견을 자유롭게 남겨주세요..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">보내기</button>
+            <p class="form-note">* 답변은 입력하신 이메일로 전송됩니다</p>
+        </form>
     </section>
 
     <!-- Footer -->
