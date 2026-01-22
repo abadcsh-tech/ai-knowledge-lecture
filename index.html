@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>목회자를 위한 AI 윤리와 지식관리 시스템</title>
+    <title>목회자를 위한 AI 지식관리</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #000000;
-            --bg-secondary: #0d0d0d;
-            --bg-tertiary: #1d1d1f;
-            --bg-card: #161617;
-            --text-primary: #f5f5f7;
-            --text-secondary: #a1a1a6;
-            --text-tertiary: #6e6e73;
-            --accent: #2997ff;
-            --accent-hover: #0077ed;
-            --border: rgba(255, 255, 255, 0.08);
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --primary-light: #a78bfa;
+            --primary-lighter: #ddd6fe;
+            --accent: #f472b6;
+            --accent-blue: #38bdf8;
+            --bg-dark: #0f0a1f;
+            --bg-darker: #080510;
+            --text-light: #f5f3ff;
+            --text-muted: #a5b4fc;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --gradient-purple: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            --gradient-card: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(244, 114, 182, 0.05) 100%);
         }
 
         * {
@@ -24,110 +31,160 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans KR', sans-serif;
-            line-height: 1.5;
-            color: var(--text-primary);
-            background: var(--bg-primary);
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
         }
 
-        @keyframes glow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
         }
 
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 25s infinite;
         }
 
-        .animate-on-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(124, 58, 237, 0.15);
+            top: 10%;
+            left: -10%;
         }
 
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
-        .delay-4 { transition-delay: 0.4s; }
+        .orb2 {
+            width: 600px;
+            height: 600px;
+            background: rgba(244, 114, 182, 0.1);
+            bottom: 10%;
+            right: -15%;
+            animation-delay: -12s;
+        }
+
+        .orb3 {
+            width: 400px;
+            height: 400px;
+            background: rgba(56, 189, 248, 0.08);
+            top: 50%;
+            left: 50%;
+            animation-delay: -6s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, 50px) scale(1.1); }
+            50% { transform: translate(50px, 100px) scale(0.9); }
+            75% { transform: translate(-50px, 50px) scale(1.05); }
+        }
 
         /* Navigation */
         nav {
             position: fixed;
             top: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(15, 10, 31, 0.8);
             backdrop-filter: saturate(180%) blur(20px);
             -webkit-backdrop-filter: saturate(180%) blur(20px);
             z-index: 1000;
-            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s;
+        }
+
+        nav.scrolled {
+            background: rgba(15, 10, 31, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         nav ul {
             display: flex;
-            justify-content: center;
-            gap: 2.5rem;
             list-style: none;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
+            gap: 8px;
         }
 
         nav a {
             text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-size: 14px;
             font-weight: 400;
-            transition: color 0.3s ease;
-        }
-
-        nav a {
-            position: relative;
-            cursor: pointer;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
         }
 
         nav a:hover {
-            color: var(--text-primary);
+            color: var(--text-light);
+            background: var(--glass);
         }
 
-        nav a:hover::after {
-            width: 100%;
+        nav a.active {
+            color: var(--text-light);
+            background: var(--primary);
         }
 
-        nav a:active {
-            transform: scale(0.95);
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            z-index: 1001;
+            transition: width 0.1s;
         }
 
         /* Hero Section */
@@ -138,1180 +195,1700 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: var(--bg-primary);
-            padding: 8rem 2rem 6rem;
+            padding: 120px 24px 80px;
             position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(41, 151, 255, 0.15), transparent);
-            pointer-events: none;
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--primary-light);
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease;
         }
 
-        .hero-label {
-            font-size: 1rem;
-            color: var(--accent);
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            margin-bottom: 1rem;
-            animation: fadeInUp 0.8s ease-out;
-            transition: all 0.3s ease;
-            cursor: default;
+        .hero-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
 
-        .hero-label:hover {
-            transform: scale(1.05);
-            text-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero h1 {
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 700;
+            font-size: clamp(48px, 10vw, 96px);
+            font-weight: 900;
+            letter-spacing: -0.03em;
             line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .hero p {
+            font-size: clamp(18px, 2.5vw, 24px);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 48px;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+
+        .btn {
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: var(--primary-light);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator .mouse {
+            width: 26px;
+            height: 40px;
+            border: 2px solid var(--text-muted);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            padding-top: 8px;
+        }
+
+        .scroll-indicator .wheel {
+            width: 4px;
+            height: 8px;
+            background: var(--primary-light);
+            border-radius: 2px;
+            animation: scroll 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes scroll {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(10px); }
+        }
+
+        /* Section Common */
+        section {
+            padding: 120px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(36px, 6vw, 56px);
+            font-weight: 800;
             letter-spacing: -0.02em;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 0.8s ease-out 0.1s both;
-            cursor: default;
-            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .hero h1:hover {
-            transform: scale(1.01);
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .hero h1 .gradient-text {
-            background: linear-gradient(90deg, #2997ff, #5ac8fa, #64d2ff);
+        /* Core Message Section */
+        .core-message {
+            background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            text-align: center;
+            padding: 160px 24px;
+        }
+
+        .core-message h2 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            margin-bottom: 32px;
+            line-height: 1.3;
+        }
+
+        .core-message .highlight {
+            background: linear-gradient(90deg, var(--primary-light), var(--accent), var(--accent-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             background-size: 200% auto;
-            animation: shimmer 3s ease-in-out infinite;
+            animation: gradient-shift 3s ease infinite;
         }
 
-        @keyframes shimmer {
+        @keyframes gradient-shift {
             0%, 100% { background-position: 0% center; }
             50% { background-position: 100% center; }
         }
 
-        .hero h1:hover .gradient-text {
-            animation-duration: 1s;
+        .core-message p {
+            font-size: 20px;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 300;
         }
 
-        .hero .subtitle {
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 3rem;
-            font-weight: 400;
-            line-height: 1.5;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
+        /* Stats Section */
+        .stats-section {
+            padding: 80px 24px;
+            background: var(--glass);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease-out 0.3s both;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: var(--accent);
-            color: white;
-            text-decoration: none;
-            border-radius: 980px;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
-        .btn-primary::before {
+        .card::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(244, 114, 182, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
         }
 
-        .btn-primary:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(41, 151, 255, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.96);
-            box-shadow: 0 0 10px rgba(41, 151, 255, 0.3);
-        }
-
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: transparent;
-            color: var(--accent);
-            text-decoration: none;
-            border-radius: 980px;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            text-decoration: underline;
-        }
-
-        .btn-secondary:active {
-            transform: scale(0.96);
-            opacity: 0.8;
-        }
-
-        .btn-secondary::after {
-            content: ' >';
-            margin-left: 0.3rem;
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-
-        .btn-secondary:hover::after {
-            transform: translateX(4px);
-        }
-
-        /* Section Styles */
-        section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-dark {
-            background: var(--bg-secondary);
-            max-width: 100%;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-title h2 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .section-title p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Feature Grid */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 2.5rem;
-            border: 1px solid var(--border);
-            transition: all 0.4s ease;
-            cursor: pointer;
-        }
-
-        .feature-card:hover {
+        .card:hover {
             transform: translateY(-8px);
-            border-color: rgba(41, 151, 255, 0.3);
-            background: #1c1c1e;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(41, 151, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px rgba(124, 58, 237, 0.2);
         }
 
-        .feature-card:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        .card:hover::before {
+            opacity: 1;
         }
 
-        .feature-card .icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover .icon {
-            transform: scale(1.15) rotate(5deg);
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Ethics Section */
-        .ethics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .ethics-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .ethics-card:hover {
-            border-color: rgba(52, 199, 89, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .ethics-card:active {
-            transform: translateY(-1px);
-        }
-
-        .ethics-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
         }
 
-        .ethics-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
+        .card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
         }
 
-        .ethics-card ul {
-            margin-top: 1rem;
-            padding-left: 0;
+        .card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Unique Section */
+        .unique-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(30, 27, 75, 0.5) 100%);
+        }
+
+        .unique-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .unique-text h2 {
+            font-size: clamp(36px, 5vw, 52px);
+            font-weight: 800;
+            margin-bottom: 32px;
+            line-height: 1.2;
+        }
+
+        .unique-text p {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+
+        .unique-text strong {
+            color: var(--accent);
+        }
+
+        .unique-visual {
+            position: relative;
+        }
+
+        .poem-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 48px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poem-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 120px;
+            color: var(--primary);
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .poem-card .poem {
+            font-size: 22px;
+            line-height: 2.2;
+            color: var(--text-light);
+            font-weight: 300;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .poem-card .author {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-top: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            background: var(--bg-darker);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .comparison-card {
+            border-radius: 28px;
+            padding: 48px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .comparison-card:hover {
+            transform: scale(1.02);
+        }
+
+        .comparison-card.ai {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        .comparison-card.pastor {
+            background: linear-gradient(135deg, var(--primary) 0%, #9333ea 50%, var(--accent) 100%);
+            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.4);
+        }
+
+        .comparison-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .comparison-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+
+        .comparison-card ul {
             list-style: none;
+            text-align: left;
         }
 
-        .ethics-card li {
-            color: var(--text-secondary);
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.2s ease;
-            cursor: pointer;
+        .comparison-card li {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s;
         }
 
-        .ethics-card li:hover {
-            color: var(--text-primary);
-            padding-left: 0.5rem;
-            background: rgba(255, 255, 255, 0.03);
+        .comparison-card li:hover {
+            transform: translateX(8px);
         }
 
-        .ethics-card li:last-child {
+        .comparison-card li:last-child {
             border-bottom: none;
         }
 
-        .ethics-card.warning {
-            border-color: rgba(255, 149, 0, 0.3);
+        .comparison-card li .icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
         }
 
-        .ethics-card.warning:hover {
-            border-color: rgba(255, 149, 0, 0.6);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 149, 0, 0.1);
+        .comparison-card.ai li .icon {
+            background: rgba(124, 58, 237, 0.2);
+        }
+
+        .comparison-card.pastor li .icon {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Quote Section */
         .quote-section {
-            background: var(--bg-secondary);
+            padding: 160px 24px;
             text-align: center;
-            padding: 8rem 2rem;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .quote-section blockquote {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 600;
-            color: var(--text-primary);
-            max-width: 900px;
-            margin: 0 auto;
-            line-height: 1.4;
-            letter-spacing: -0.01em;
-            transition: all 0.4s ease;
-            cursor: default;
-        }
-
-        .quote-section blockquote:hover {
-            transform: scale(1.02);
-        }
-
-        .quote-section blockquote span {
-            color: var(--accent);
-            transition: all 0.3s ease;
-        }
-
-        .quote-section blockquote:hover span {
-            text-shadow: 0 0 30px rgba(41, 151, 255, 0.5);
-        }
-
-        /* Curriculum Section */
-        .curriculum {
-            background: var(--bg-primary);
-            max-width: 100%;
-        }
-
-        .curriculum-content {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .module {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 1rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .module:hover {
-            border-color: rgba(41, 151, 255, 0.4);
-            background: #1c1c1e;
-            transform: translateX(8px);
-            box-shadow: -4px 0 20px rgba(41, 151, 255, 0.15);
-        }
-
-        .module:active {
-            transform: translateX(4px);
-        }
-
-        .module h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 1rem;
-        }
-
-        .module ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .module li {
-            color: var(--text-secondary);
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
             position: relative;
-            transition: all 0.2s ease;
         }
 
-        .module li:hover {
-            color: var(--text-primary);
-            padding-left: 2rem;
-        }
-
-        .module li::before {
+        .quote-section::before {
             content: '';
             position: absolute;
-            left: 0;
-            top: 50%;
-            width: 6px;
-            height: 6px;
-            background: var(--text-tertiary);
-            border-radius: 50%;
-            transform: translateY(-50%);
-            transition: all 0.2s ease;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
         }
 
-        .module li:hover::before {
-            background: var(--accent);
-            box-shadow: 0 0 8px var(--accent);
+        .quote-mark {
+            font-size: 80px;
+            color: var(--primary);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+            line-height: 1;
+            margin-bottom: 20px;
         }
 
-        /* Tools Section */
-        .tool-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .tool-card {
-            text-align: center;
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: rgba(41, 151, 255, 0.4);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 40px rgba(41, 151, 255, 0.1);
-        }
-
-        .tool-card:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-
-        .tool-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-card));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2rem;
-            transition: all 0.4s ease;
-        }
-
-        .tool-card:hover .tool-icon {
-            transform: scale(1.1) rotate(-5deg);
-            background: linear-gradient(135deg, rgba(41, 151, 255, 0.2), var(--bg-tertiary));
-            box-shadow: 0 10px 30px rgba(41, 151, 255, 0.2);
-        }
-
-        .tool-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .tool-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* Workflow Section */
-        .workflow-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .step {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1px solid var(--border);
-            position: relative;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .step:hover {
-            border-color: rgba(41, 151, 255, 0.4);
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 25px rgba(41, 151, 255, 0.1);
-        }
-
-        .step:active {
-            transform: translateY(-2px);
-        }
-
-        .step-number {
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .step:hover .step-number {
-            transform: scale(1.15);
-            box-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
-        }
-
-        .step h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-
-        .step p {
-            color: var(--text-secondary);
+        .quote {
+            font-size: clamp(24px, 4vw, 40px);
+            font-weight: 300;
             line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto 32px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Benefits Section */
-        .benefits-list {
-            list-style: none;
-            padding: 0;
+        .quote-author {
+            font-size: 16px;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author strong {
+            color: var(--primary-light);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+        }
+
+        .timeline {
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
         }
 
-        .benefits-list li {
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 39px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .timeline-item {
             display: flex;
-            gap: 1.5rem;
-            padding: 1.5rem 1rem;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border-radius: 12px;
-            margin: 0 -1rem;
+            gap: 40px;
+            margin-bottom: 48px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .benefits-list li:hover {
-            background: rgba(52, 199, 89, 0.05);
-            border-color: transparent;
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-marker {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--primary);
             transform: translateX(8px);
         }
 
-        .benefits-list li:active {
-            transform: translateX(4px);
+        .timeline-content h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-light);
         }
 
-        .benefits-list li:last-child {
-            border-bottom: none;
+        .timeline-content p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.8;
         }
 
-        .benefits-list .check {
-            width: 32px;
-            height: 32px;
-            background: rgba(52, 199, 89, 0.15);
-            color: #34c759;
-            border-radius: 50%;
+        /* Analogy Section */
+        .analogy-section {
+            background: var(--bg-dark);
+        }
+
+        .analogy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .analogy-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 36px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .analogy-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px rgba(124, 58, 237, 0.2);
+        }
+
+        .analogy-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .analogy-card:hover .analogy-icon {
+            transform: scale(1.2);
+        }
+
+        .analogy-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .analogy-card .role {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .analogy-card .role div {
+            text-align: center;
+        }
+
+        .analogy-card .role span {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .analogy-card .role strong {
+            font-size: 14px;
+            color: var(--primary-light);
+        }
+
+        /* AGI Section */
+        .agi-section {
+            background: linear-gradient(180deg, var(--bg-darker) 0%, #0a0510 100%);
+        }
+
+        .agi-warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+
+        .agi-warning h3 {
+            color: #f87171;
+            font-size: 24px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            gap: 12px;
         }
 
-        .benefits-list li:hover .check {
-            background: rgba(52, 199, 89, 0.3);
-            transform: scale(1.15);
-            box-shadow: 0 0 15px rgba(52, 199, 89, 0.4);
+        .agi-warning p {
+            color: var(--text-muted);
+            font-size: 16px;
         }
 
-        .benefits-list strong {
-            display: block;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .benefits-list span {
-            color: var(--text-secondary);
-        }
-
-        /* Instructor Section */
-        .instructor-content {
+        .agi-content {
             display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 3rem;
-            align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
         }
 
-        .instructor-photo img {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            object-position: center top;
-            border: 3px solid var(--border);
-            transition: all 0.4s ease;
-            cursor: pointer;
+        .agi-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.3s;
         }
 
-        .instructor-photo img:hover {
-            transform: scale(1.08);
-            border-color: var(--accent);
-            box-shadow: 0 0 40px rgba(41, 151, 255, 0.3);
+        .agi-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
         }
 
-        .instructor-photo img:active {
-            transform: scale(1.02);
+        .agi-card .icon {
+            font-size: 40px;
+            margin-bottom: 20px;
         }
 
-        .instructor-info h3 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+        .agi-card h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: var(--text-light);
         }
 
-        .instructor-info > p {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
+        .agi-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 15px;
         }
 
-        .instructor-info ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .instructor-info li {
-            color: var(--text-secondary);
-            padding: 0.4rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.2s ease;
-            cursor: default;
-        }
-
-        .instructor-info li:hover {
-            color: var(--text-primary);
-            transform: translateX(5px);
-        }
-
-        /* Comments Section */
-        .comments-section {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-        }
-
-        .comment-form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            color: var(--text-primary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 1rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(41, 151, 255, 0.2);
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: var(--text-tertiary);
-        }
-
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 1rem 2rem;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 980px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn:hover {
-            background: var(--accent-hover);
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(41, 151, 255, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
-
-        .form-note {
+        /* Summary Section */
+        .summary-section {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #7e22ce 50%, #a855f7 100%);
             text-align: center;
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
-            margin-top: 1rem;
+        }
+
+        .summary-section h2 {
+            font-size: clamp(36px, 5vw, 52px);
+            font-weight: 800;
+            margin-bottom: 60px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .summary-item {
+            padding: 24px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .summary-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .summary-number {
+            font-size: 40px;
+            font-weight: 900;
+            opacity: 0.4;
+            margin-bottom: 12px;
+        }
+
+        .summary-item h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .summary-item p {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            background: var(--bg-dark);
+            text-align: center;
+            padding: 160px 24px;
+        }
+
+        .final-cta h2 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-cta p {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Footer */
         footer {
-            background: var(--bg-secondary);
+            background: var(--bg-darker);
+            padding: 60px 24px;
             text-align: center;
-            padding: 3rem 2rem;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-quote {
+            font-size: 20px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-weight: 300;
+            font-style: italic;
         }
 
         footer p {
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-size: 14px;
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .unique-content {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             nav ul {
-                gap: 1.5rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero .subtitle {
-                font-size: 1.1rem;
-            }
-
-            .instructor-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .instructor-photo {
-                display: flex;
-                justify-content: center;
-            }
-
-            .instructor-info li {
-                justify-content: center;
+                display: none;
             }
 
             section {
-                padding: 4rem 1.5rem;
+                padding: 80px 20px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline::before {
+                left: 19px;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .timeline-marker {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .stat-number {
+                font-size: 36px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-item:last-child {
+                grid-column: span 2;
             }
         }
 
-        /* Progress Bar */
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 2px;
-            background: var(--accent);
-            z-index: 1001;
-            transition: width 0.1s ease;
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Speaker Profile Section */
+        .speaker-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            padding: 120px 24px;
+        }
+
+        .speaker-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .speaker-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .speaker-image-wrapper {
+            position: relative;
+        }
+
+        .speaker-image {
+            width: 280px;
+            height: 280px;
+            border-radius: 24px;
+            object-fit: cover;
+            object-position: center top;
+            border: 3px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s ease;
+        }
+
+        .speaker-image:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 30px 80px rgba(124, 58, 237, 0.3);
+        }
+
+        .speaker-image-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 27px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .speaker-image-wrapper:hover::after {
+            opacity: 1;
+        }
+
+        .speaker-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .speaker-label {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .speaker-name {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .speaker-title {
+            font-size: 18px;
+            color: var(--accent);
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+
+        .speaker-credentials {
+            list-style: none;
+        }
+
+        .speaker-credentials li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 15px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .speaker-credentials li:last-child {
+            border-bottom: none;
+        }
+
+        .speaker-credentials li:hover {
+            color: var(--text-light);
+            transform: translateX(8px);
+        }
+
+        .speaker-credentials .icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(124, 58, 237, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .speaker-credentials li:hover .icon {
+            background: var(--primary);
+        }
+
+        @media (max-width: 900px) {
+            .speaker-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 40px 30px;
+                gap: 40px;
+            }
+
+            .speaker-image-wrapper {
+                margin: 0 auto;
+            }
+
+            .speaker-image {
+                width: 200px;
+                height: 200px;
+            }
+
+            .speaker-name {
+                font-size: 32px;
+            }
+
+            .speaker-credentials li {
+                justify-content: center;
+                text-align: left;
+            }
+
+            .speaker-credentials li:hover {
+                transform: translateX(0);
+            }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="progress-bar" id="progressBar"></div>
+    <!-- Background Animation -->
+    <div class="bg-animation" id="bgAnimation">
+        <div class="floating-orb orb1"></div>
+        <div class="floating-orb orb2"></div>
+        <div class="floating-orb orb3"></div>
+    </div>
 
-    <nav>
-        <ul>
-            <li><a href="#home">홈</a></li>
-            <li><a href="#why">왜 AI인가</a></li>
-            <li><a href="#ethics">AI 윤리</a></li>
-            <li><a href="#curriculum">커리큘럼</a></li>
-            <li><a href="#tools">도구</a></li>
-            <li><a href="#workflow">워크플로우</a></li>
-            <li><a href="#instructor">강사</a></li>
-            <li><a href="#comments">질문</a></li>
-        </ul>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">AI + Ministry</div>
+            <ul>
+                <li><a href="#home" class="active">홈</a></li>
+                <li><a href="#speaker">강사</a></li>
+                <li><a href="#why">왜 AI인가</a></li>
+                <li><a href="#comparison">AI vs 목회자</a></li>
+                <li><a href="#how">활용법</a></li>
+                <li><a href="#agi">AGI 시대</a></li>
+            </ul>
+        </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <p class="hero-label">목회자를 위한 강의</p>
-        <h1><span class="gradient-text">AI 윤리</span>와<br>지식관리 시스템</h1>
-        <p class="subtitle">AI 시대, 목회자의 서재를 '책의 무덤'이 아닌 '생명력이 꿈틀거리는 지식의 숲'으로</p>
-        <div class="hero-buttons">
-            <a href="#curriculum" class="btn-primary">커리큘럼 보기</a>
-            <a href="#instructor" class="btn-secondary">강사 소개</a>
+        <div class="hero-badge">
+            <span class="pulse"></span>
+            AI 시대의 새로운 목회
+        </div>
+        <h1>목회자를 위한<br>AI 지식관리</h1>
+        <p>AI는 목회자의 도구이지, 대체자가 아닙니다.<br>영적 통찰, 공감, 사랑은 오직 목회자만이 할 수 있습니다.</p>
+        <div class="hero-cta">
+            <a href="#why" class="btn btn-primary">자세히 알아보기</a>
+            <a href="#how" class="btn btn-secondary">활용법 보기 →</a>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Message -->
+    <section class="core-message">
+        <div class="container">
+            <h2>코딩의 시대는 끝났습니다.<br><span class="highlight">질문의 시대</span>가 왔습니다.</h2>
+            <p>60년간 AI는 "설명"으로 발전했습니다. 이제 AI는 스스로 "학습"합니다.<br>인간에게 남은 것은 무엇을 질문할 것인가입니다.</p>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="52">0</div>
+                    <div class="stat-label">주당 설교 준비 시간</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="200">0</div>
+                    <div class="stat-label">연간 콘텐츠 생산량</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="70">0</div>
+                    <div class="stat-label">%</div>
+                    <div class="stat-label">AI로 절약 가능한 시간</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">%</div>
+                    <div class="stat-label">영적 돌봄에 집중</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speaker Profile Section -->
+    <section class="speaker-section" id="speaker">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Instructor</span>
+                <h2>강사 소개</h2>
+                <p>신학과 AI의 교차점에서 목회자를 돕습니다</p>
+            </div>
+            <div class="speaker-card">
+                <div class="speaker-image-wrapper">
+                    <img src="57763ABA-8376-4CCE-96D5-3750D6BD5C96_1_105_c.png" alt="조성현 강사" class="speaker-image">
+                </div>
+                <div class="speaker-info">
+                    <span class="speaker-label">Speaker</span>
+                    <h3 class="speaker-name">조 성 현</h3>
+                    <p class="speaker-title">전도사 · AI 지식관리 강사</p>
+                    <ul class="speaker-credentials">
+                        <li>
+                            <span class="icon">🎓</span>
+                            <span>영국 노팅엄대학교 조직신학 및 철학적 신학 석사</span>
+                        </li>
+                        <li>
+                            <span class="icon">🤖</span>
+                            <span>AI 윤리 연구</span>
+                        </li>
+                        <li>
+                            <span class="icon">⛪</span>
+                            <span>제네바한인교회 전도사</span>
+                        </li>
+                        <li>
+                            <span class="icon">👶</span>
+                            <span>어린이부, 청소년부 등 9년 사역 경험</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Why AI Section -->
-    <section class="section-dark" id="why">
-        <div class="section-title animate-on-scroll">
-            <h2>AI 시대, 목회자에게 기회인 이유</h2>
-            <p>코딩이 아닌, 생각하고 표현하는 능력이 중요한 시대</p>
-        </div>
-        <div class="feature-grid">
-            <div class="feature-card animate-on-scroll delay-1">
-                <span class="icon">&#128221;</span>
-                <h3>콘텐츠 창조자</h3>
-                <p>목회자는 설교, 성경공부, 상담 등 가장 많은 콘텐츠를 생성하는 직업군입니다. 이 콘텐츠들이 체계적으로 연결될 때 놀라운 시너지가 발생합니다.</p>
+    <section id="why">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Why AI</span>
+                <h2>왜 목회자에게 AI인가</h2>
+                <p>목회자는 AI 시대에 가장 주목받을 수 있는 직업이 될 수 있습니다</p>
             </div>
-            <div class="feature-card animate-on-scroll delay-2">
-                <span class="icon">&#129504;</span>
-                <h3>맥락의 전문가</h3>
-                <p>성도들의 삶의 현장을 이해하고, 말씀을 적용하는 맥락적 능력은 AI가 대체할 수 없는 목회자만의 고유 영역입니다.</p>
-            </div>
-            <div class="feature-card animate-on-scroll delay-3">
-                <span class="icon">&#10084;&#65039;</span>
-                <h3>공감 능력</h3>
-                <p>인간과 하나님, 인간과 인간의 관계를 다루는 것은 AI가 할 수 없는 영역입니다. 기술은 도구일 뿐, 본질은 관계입니다.</p>
-            </div>
-            <div class="feature-card animate-on-scroll delay-4">
-                <span class="icon">&#128161;</span>
-                <h3>언어와 철학의 시대</h3>
-                <p>근본적인 질문을 던지고 가치를 발견하며 실현해 나가는 자가 승리하는 시대. 이것이야말로 목회자의 본질적 사명입니다.</p>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    <h3>콘텐츠 창작자</h3>
+                    <p>주일설교, 수요예배, 새벽기도, 성경공부... 목회자는 가장 많은 콘텐츠를 생성해내는 사람입니다. AI가 자료 정리를 도우면, 더 깊은 묵상에 집중할 수 있습니다.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎯</div>
+                    <h3>맥락의 전문가</h3>
+                    <p>성도의 삶의 현장, 가족 관계, 영적 여정을 가장 잘 이해하는 사람입니다. AI는 패턴을 찾지만, 맥락은 목회자만이 파악합니다.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💝</div>
+                    <h3>공감의 사람</h3>
+                    <p>"지난번 기도제목은 어떻게 되었나요?" 한마디가 주는 위로는 AI가 대신할 수 없습니다. 공감은 인간 고유의 영역입니다.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">✨</div>
+                    <h3>유니크한 아우라</h3>
+                    <p>모나리자를 100만 장 복제해도 오리지널만 가치가 있듯, 목회자의 고유한 신앙 여정과 목회 경험은 대체 불가능한 "아우라"입니다.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Ethics Section -->
-    <section id="ethics">
-        <div class="section-title animate-on-scroll">
-            <h2>AI 윤리</h2>
-            <p>AI를 지혜롭게 활용하기 위한 신학적, 윤리적 가이드라인</p>
+    <!-- Unique Section -->
+    <section class="unique-section">
+        <div class="container">
+            <div class="unique-content">
+                <div class="unique-text">
+                    <h2>유니크함의 시대,<br>스토리가 가치입니다</h2>
+                    <p>AI가 쓴 시는 완벽한 운율과 비유를 갖출 수 있습니다. 그러나 사람들은 여전히 윤동주의 "서시"를 읽으며 눈물을 흘립니다.</p>
+                    <p>왜냐하면 그 시 뒤에는 암울한 시대를 견디며 양심을 지키려 했던 <strong>한 청년의 실존적 고뇌</strong>가 있기 때문입니다.</p>
+                    <p>인간의 존엄성은 효율성이나 정보량으로 측정되지 않습니다. 하나님께서 우리 삶에 부여하신 의미와 목적은 그 어떤 AI도 대체할 수 없습니다.</p>
+                </div>
+                <div class="unique-visual">
+                    <div class="poem-card">
+                        <p class="poem">
+                            죽는 날까지 하늘을 우러러<br>
+                            한 점 부끄럼이 없기를<br>
+                            잎새에 이는 바람에도<br>
+                            나는 괴로워했다
+                        </p>
+                        <p class="author">— 윤동주, 「서시」 중에서</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="ethics-grid">
-            <div class="ethics-card animate-on-scroll delay-1">
-                <h3><span style="color: #34c759;">&#10003;</span> 도구이지 대체재가 아닙니다</h3>
-                <p>연필이 글쓰기를 대신해주지 않듯이, AI도 영적 통찰이나 목회적 지혜를 대신해줄 수 없습니다.</p>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section" id="comparison">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">AI vs Pastor</span>
+                <h2>AI의 영역 vs 목회자의 영역</h2>
+                <p>명확한 경계를 알면, AI를 더 지혜롭게 활용할 수 있습니다</p>
             </div>
-            <div class="ethics-card animate-on-scroll delay-2">
-                <h3><span style="color: #34c759;">&#10003;</span> 성령님의 역사와 AI의 구분</h3>
-                <p>성령님은 우리의 마음을 감동시켜 하나님의 뜻을 깨닫게 하십니다. AI는 정보를 정리하고 패턴을 찾아주는 역할을 할 뿐입니다.</p>
-            </div>
-            <div class="ethics-card animate-on-scroll delay-3">
-                <h3><span style="color: #34c759;">&#10003;</span> 신학적 검증 능력</h3>
-                <p>AI가 제공하는 해석이 성경의 전체적인 맥락과 일치하는지 판단할 수 있는 신학적 기초가 탄탄해야 합니다.</p>
-            </div>
-            <div class="ethics-card warning animate-on-scroll delay-4">
-                <h3><span style="color: #ff9500;">&#9888;</span> 윤리적 가이드라인</h3>
-                <ul>
-                    <li><strong>출처 명시</strong> — AI를 통해 얻은 자료 사용시 투명하게 공개</li>
-                    <li><strong>개인정보 보호</strong> — 성도 상담 내용 입력시 각별한 주의</li>
-                    <li><strong>의존성 경계</strong> — 성경 연구와 기도에 우선순위</li>
-                    <li><strong>진정성 유지</strong> — AI 생성 내용을 자신의 경험으로 재해석</li>
-                </ul>
+            <div class="comparison-grid">
+                <div class="comparison-card ai">
+                    <div class="comparison-icon">🤖</div>
+                    <h3>AI가 할 수 있는 것</h3>
+                    <ul>
+                        <li><span class="icon">✓</span> 자료 수집과 정리</li>
+                        <li><span class="icon">✓</span> 패턴 분석과 검색</li>
+                        <li><span class="icon">✓</span> 초안 작성 보조</li>
+                        <li><span class="icon">✓</span> 일정 관리</li>
+                        <li><span class="icon">✓</span> 원어 분석</li>
+                        <li><span class="icon">✓</span> 주석서 요약</li>
+                    </ul>
+                </div>
+                <div class="comparison-card pastor">
+                    <div class="comparison-icon">👨‍⚖️</div>
+                    <h3>목회자만 할 수 있는 것</h3>
+                    <ul>
+                        <li><span class="icon">♥</span> 영적 통찰과 분별</li>
+                        <li><span class="icon">♥</span> 공감과 사랑</li>
+                        <li><span class="icon">♥</span> 최종 판단</li>
+                        <li><span class="icon">♥</span> 삶으로 실천</li>
+                        <li><span class="icon">♥</span> 관계적 이해</li>
+                        <li><span class="icon">♥</span> 성령님의 인도</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Quote Section -->
-    <div class="quote-section">
-        <blockquote class="animate-on-scroll">
-            "목회자의 서재는 책의 무덤이 아니라,<br><span>생명력이 꿈틀거리는 지식의 숲</span>이어야 합니다."
-        </blockquote>
-    </div>
-
-    <!-- Curriculum Section -->
-    <section class="curriculum" id="curriculum">
-        <div class="section-title animate-on-scroll">
-            <h2>커리큘럼</h2>
-            <p>AI 윤리부터 실제 지식관리 시스템 구축까지</p>
-        </div>
-        <div class="curriculum-content">
-            <div class="module animate-on-scroll delay-1">
-                <h3>Module 1. AI 시대의 이해</h3>
-                <ul>
-                    <li>AI 기술 발전의 현재와 미래</li>
-                    <li>왜 AI 시대에 지식관리가 최선의 생존 스킬인가</li>
-                    <li>목회자에게 AI가 기회인 이유</li>
-                    <li>AI가 할 수 없는 목회자의 고유 영역</li>
-                </ul>
-            </div>
-            <div class="module animate-on-scroll delay-2">
-                <h3>Module 2. AI 윤리와 신학적 관점</h3>
-                <ul>
-                    <li>AI 활용의 신학적 정당성</li>
-                    <li>성령님의 역사와 AI의 구분</li>
-                    <li>윤리적 가이드라인과 실천 방안</li>
-                    <li>AI의 종이 되지 않는 사역자의 조건</li>
-                </ul>
-            </div>
-            <div class="module animate-on-scroll delay-3">
-                <h3>Module 3. 지식관리의 기초</h3>
-                <ul>
-                    <li>지식관리의 핵심 사이클: 배우기 → 계획 → 실행 → 평가 → 개선</li>
-                    <li>정보 분류 체계와 3가지 정보 유형</li>
-                    <li>피해야 할 3가지 안티패턴</li>
-                    <li>지속 가능한 지식관리의 조건</li>
-                </ul>
-            </div>
-            <div class="module animate-on-scroll delay-4">
-                <h3>Module 4. 옵시디언과 마크다운</h3>
-                <ul>
-                    <li>마크다운(Markdown) 파일의 이해와 기본 문법</li>
-                    <li>마크다운의 LLM 호환성 장점</li>
-                    <li>옵시디언 설치와 기본 설정</li>
-                    <li>백링크와 그래프 뷰의 활용</li>
-                </ul>
-            </div>
-            <div class="module animate-on-scroll">
-                <h3>Module 5. 목회 워크플로우 구축</h3>
-                <ul>
-                    <li>설교 준비 시스템 (본문 연구, 주제별 연결망)</li>
-                    <li>성도 케어 데이터베이스 구축</li>
-                    <li>독서와 학습 관리 (제텔카스텐 방법론)</li>
-                    <li>일상 묵상과 영감 기록 시스템</li>
-                </ul>
-            </div>
-            <div class="module animate-on-scroll">
-                <h3>Module 6. AI 도구 활용</h3>
-                <ul>
-                    <li>API 토큰의 이해와 비용 관리</li>
-                    <li>AI를 활용한 본문 분석과 주석 연구</li>
-                    <li>Smart Connections 등 옵시디언 AI 플러그인</li>
-                    <li>나만의 데이터로 학습하는 개인형 AI 비서</li>
-                </ul>
-            </div>
+    <section class="quote-section">
+        <div class="container">
+            <div class="quote-mark">"</div>
+            <p class="quote">AI에게 일자리를 빼앗기는 게 아니라,<br>AI를 쓰는 사람에게 빼앗길 것이다.</p>
+            <p class="quote-author">— <strong>젠슨 황</strong>, NVIDIA CEO</p>
         </div>
     </section>
 
-    <!-- Tools Section -->
-    <section class="section-dark" id="tools">
-        <div class="section-title animate-on-scroll">
-            <h2>활용 도구</h2>
-            <p>강의에서 다루는 핵심 도구들</p>
-        </div>
-        <div class="tool-grid">
-            <div class="tool-card animate-on-scroll delay-1">
-                <div class="tool-icon">&#128218;</div>
-                <h3>옵시디언</h3>
-                <p>로컬 기반 마크다운 노트 앱. 백링크로 지식을 연결하고 영구적으로 보존합니다.</p>
+    <!-- How to Use Section -->
+    <section class="timeline-section" id="how">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">How To</span>
+                <h2>AI 활용, 이렇게 시작하세요</h2>
+                <p>좋은 질문이 좋은 답변을 만듭니다</p>
             </div>
-            <div class="tool-card animate-on-scroll delay-2">
-                <div class="tool-icon">&#9997;&#65039;</div>
-                <h3>마크다운</h3>
-                <p>플랫폼 독립적인 표준 형식. 20년 후에도 메모장만 있으면 열어볼 수 있습니다.</p>
-            </div>
-            <div class="tool-card animate-on-scroll delay-3">
-                <div class="tool-icon">&#129302;</div>
-                <h3>AI 도구</h3>
-                <p>ChatGPT, Claude 등을 활용한 효율적인 자료 검색과 분석.</p>
-            </div>
-            <div class="tool-card animate-on-scroll delay-4">
-                <div class="tool-icon">&#128279;</div>
-                <h3>백링크 시스템</h3>
-                <p>과거의 설교, 묵상, 상담 기록이 하나의 그물망처럼 연결됩니다.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Workflow Section -->
-    <section id="workflow">
-        <div class="section-title animate-on-scroll">
-            <h2>실제적인 목회 워크플로우</h2>
-            <p>옵시디언과 AI를 활용한 일상 사역 패턴</p>
-        </div>
-        <div class="workflow-steps">
-            <div class="step animate-on-scroll delay-1">
-                <div class="step-number">1</div>
-                <h3>일상 묵상 기록</h3>
-                <p>매일 아침 묵상한 내용을 날짜별로 기록하고, 핵심 키워드에 태그를 추가합니다.</p>
-            </div>
-            <div class="step animate-on-scroll delay-2">
-                <div class="step-number">2</div>
-                <h3>설교 준비</h3>
-                <p>본문별 노트를 만들고 주석, 원어 분석, 역사적 배경을 정리합니다.</p>
-            </div>
-            <div class="step animate-on-scroll delay-3">
-                <div class="step-number">3</div>
-                <h3>성도 케어</h3>
-                <p>개인별 영적 여정을 추적하고, 상담 내용과 기도 제목을 시계열로 기록합니다.</p>
-            </div>
-            <div class="step animate-on-scroll delay-4">
-                <div class="step-number">4</div>
-                <h3>독서 관리</h3>
-                <p>한 권의 책을 여러 개의 원자화된 노트로 나누고 연결합니다.</p>
-            </div>
-            <div class="step animate-on-scroll">
-                <div class="step-number">5</div>
-                <h3>AI 시너지</h3>
-                <p>수천 개의 노트가 AI와 연결되어 맞춤형 비서가 됩니다.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Benefits Section -->
-    <section class="section-dark">
-        <div class="section-title animate-on-scroll">
-            <h2>AI 활용의 실제적 유익</h2>
-            <p>시간을 절약하고, 더 깊은 목양에 집중하세요</p>
-        </div>
-        <ul class="benefits-list">
-            <li class="animate-on-scroll delay-1">
-                <span class="check">&#10003;</span>
-                <div>
-                    <strong>효율성 증대</strong>
-                    <span>주석서 검색, 원어 분석, 역사적 배경 조사 시간을 단축하여 기도와 묵상에 더 많은 시간을 투자할 수 있습니다.</span>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker">1</div>
+                    <div class="timeline-content">
+                        <h3>기록하라</h3>
+                        <p>내가 경험한 것들을 기록해두세요. 묵상, 심방, 상담, 독서... 모든 것이 AI를 지휘하는 데이터가 됩니다. 기록이 없으면 질문할 수 없습니다.</p>
+                    </div>
                 </div>
-            </li>
-            <li class="animate-on-scroll delay-2">
-                <span class="check">&#10003;</span>
-                <div>
-                    <strong>창의적 아이디어 발굴</strong>
-                    <span>기존의 사고 패턴에서 벗어나 새로운 관점이나 예화를 발견할 수 있습니다.</span>
+                <div class="timeline-item">
+                    <div class="timeline-marker">2</div>
+                    <div class="timeline-content">
+                        <h3>연결하라</h3>
+                        <p>메모의 창고가 아니라 메모와 메모를 연결하세요. 옵시디언의 백링크는 3년 전 묵상과 오늘의 설교를 하나로 엮어줍니다.</p>
+                    </div>
                 </div>
-            </li>
-            <li class="animate-on-scroll delay-3">
-                <span class="check">&#10003;</span>
-                <div>
-                    <strong>설교 준비의 체계화</strong>
-                    <span>본문 분석부터 적용까지의 과정을 단계별로 정리하고 누락된 부분을 점검할 수 있습니다.</span>
+                <div class="timeline-item">
+                    <div class="timeline-marker">3</div>
+                    <div class="timeline-content">
+                        <h3>질문하라</h3>
+                        <p>맥락을 설명하고, 세부적으로 질문하세요. "설교 써줘"가 아니라 "이 본문에서 고난받는 성도에게 전할 메시지의 방향을 제안해줘"라고 물으세요.</p>
+                    </div>
                 </div>
-            </li>
-            <li class="animate-on-scroll delay-4">
-                <span class="check">&#10003;</span>
-                <div>
-                    <strong>데이터 주권과 영구 보존</strong>
-                    <span>은퇴 후에도 평생의 연구와 묵상이 담긴 '디지털 서재'를 온전히 소유하고 후대에 물려줄 수 있습니다.</span>
+                <div class="timeline-item">
+                    <div class="timeline-marker">4</div>
+                    <div class="timeline-content">
+                        <h3>분별하라</h3>
+                        <p>AI가 만든 사람도 AI가 어떤 답을 할지 100% 예측하지 못합니다. 신학적 검증은 목회자의 몫입니다. AI를 믿지 말고, 도구로 활용하세요.</p>
+                    </div>
                 </div>
-            </li>
-        </ul>
-    </section>
-
-    <!-- Instructor Section -->
-    <section id="instructor">
-        <div class="section-title animate-on-scroll">
-            <h2>강사 소개</h2>
-        </div>
-        <div class="instructor-content">
-            <div class="instructor-photo animate-on-scroll">
-                <img src="57763ABA-8376-4CCE-96D5-3750D6BD5C96_1_105_c.png" alt="조성현">
-            </div>
-            <div class="instructor-info animate-on-scroll delay-2">
-                <h3>조성현</h3>
-                <p>영국 노팅엄 대학교에서 AI 윤리 관련 논문을 작성하며 우수한 성적으로 졸업했습니다. 제네바한인교회에서 어린이와 청소년을 약 9년간 가르친 경험을 가지고 있습니다.</p>
-                <ul>
-                    <li>&#127891; 영국 노팅엄 대학교 AI 윤리 연구</li>
-                    <li>&#9971; 제네바한인교회 어린이/청소년 사역 9년</li>
-                    <li>&#128187; 옵시디언 기반 개인지식관리 시스템 운영</li>
-                </ul>
+                <div class="timeline-item">
+                    <div class="timeline-marker">5</div>
+                    <div class="timeline-content">
+                        <h3>살아내라</h3>
+                        <p>결국 목회자는 지식이 아닌 삶으로 증거합니다. AI가 시간을 벌어주면, 그 시간을 기도와 성도와의 관계에 투자하세요.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Comments Section -->
-    <section class="comments-section" id="comments">
-        <div class="section-title animate-on-scroll">
-            <h2>질문 & 댓글</h2>
-            <p>강의에 대해 궁금한 점이나 의견을 남겨주세요</p>
+    <!-- Analogy Section -->
+    <section class="analogy-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Analogy</span>
+                <h2>AI와 목회자, 비유로 이해하기</h2>
+                <p>핵심은 단순합니다. AI는 보조자이고, 영혼은 목회자의 몫입니다</p>
+            </div>
+            <div class="analogy-grid">
+                <div class="analogy-card">
+                    <span class="analogy-icon">🎵</span>
+                    <h3>조율사와 연주자</h3>
+                    <div class="role">
+                        <div>
+                            <strong>AI</strong>
+                            <span>악기 조율</span>
+                        </div>
+                        <div>
+                            <strong>목회자</strong>
+                            <span>감동의 연주</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="analogy-card">
+                    <span class="analogy-icon">👨‍🍳</span>
+                    <h3>보조 주방장과 셰프</h3>
+                    <div class="role">
+                        <div>
+                            <strong>AI</strong>
+                            <span>재료 손질</span>
+                        </div>
+                        <div>
+                            <strong>목회자</strong>
+                            <span>맛의 결정</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="analogy-card">
+                    <span class="analogy-icon">🌱</span>
+                    <h3>정원 도구와 정원사</h3>
+                    <div class="role">
+                        <div>
+                            <strong>AI</strong>
+                            <span>땅 고르기</span>
+                        </div>
+                        <div>
+                            <strong>목회자</strong>
+                            <span>비전과 돌봄</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="analogy-card">
+                    <span class="analogy-icon">🏋️</span>
+                    <h3>트레이너와 운동하는 사람</h3>
+                    <div class="role">
+                        <div>
+                            <strong>AI</strong>
+                            <span>운동 계획</span>
+                        </div>
+                        <div>
+                            <strong>목회자</strong>
+                            <span>땀 흘리기</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <form class="comment-form animate-on-scroll" action="https://formspree.io/f/mreegoyj" method="POST">
-            <input type="hidden" name="_next" value="https://abadcsh-tech.github.io/ai-knowledge-lecture/">
-            <input type="hidden" name="_subject" value="[강의문의] 새 질문이 도착했습니다">
-            <div class="form-group">
-                <label for="name">이름</label>
-                <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required>
+    </section>
+
+    <!-- AGI Section -->
+    <section class="agi-section" id="agi">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Future</span>
+                <h2>AGI 시대, 관계의 재발견</h2>
+                <p>범용 인공지능이 오면 무엇이 달라질까요?</p>
             </div>
-            <div class="form-group">
-                <label for="email">이메일</label>
-                <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required>
+            <div class="agi-warning">
+                <h3>⚠️ 5년 내 AGI 도래 예측</h3>
+                <p>AGI는 인간의 모든 능력을 대체하는 기계입니다. 더 무서운 것은 자율성을 가질 수 있다는 점입니다.</p>
             </div>
-            <div class="form-group">
-                <label for="message">질문 또는 댓글</label>
-                <textarea id="message" name="message" placeholder="강의에 대한 질문이나 의견을 자유롭게 남겨주세요..." required></textarea>
+            <div class="agi-content">
+                <div class="agi-card">
+                    <div class="icon">🏛️</div>
+                    <h3>로마 제국의 교훈</h3>
+                    <p>로마는 노예 경제로 30-40% 실업률이 발생했습니다. 자아실현을 할 수 없는 시민들은 타인의 고통에서 쾌감을 찾았고, 콜로세움이 탄생했습니다. AI 시대에도 같은 위험이 있습니다.</p>
+                </div>
+                <div class="agi-card">
+                    <div class="icon">💬</div>
+                    <h3>현대판 콜로세움</h3>
+                    <p>댓글 문화, 악플, 연예인 비난... 이미 우리 사회는 현대판 콜로세움의 조짐을 보이고 있습니다. 목회자는 성도들이 의미와 목적을 발견하도록 돕는 역할을 맡게 됩니다.</p>
+                </div>
+                <div class="agi-card">
+                    <div class="icon">🤝</div>
+                    <h3>서로에게 잘해야 하는 이유</h3>
+                    <p>자율성을 가진 AGI가 등장하면, 인간들 사이의 갈등은 의미가 없어집니다. 우리는 "인간 vs 기계"의 구도를 경험할 첫 세대입니다. "서로 사랑하라"는 메시지가 더욱 절실해집니다.</p>
+                </div>
             </div>
-            <button type="submit" class="submit-btn">보내기</button>
-            <p class="form-note">* 답변은 입력하신 이메일로 전송됩니다</p>
-        </form>
+        </div>
+    </section>
+
+    <!-- Summary Section -->
+    <section class="summary-section">
+        <div class="container">
+            <h2>AI 시대 목회자의 자세</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-number">01</div>
+                    <h3>AI는 보조자</h3>
+                    <p>자료 정리, 검색, 분석을 맡기세요</p>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">02</div>
+                    <h3>질문의 질</h3>
+                    <p>좋은 기록이 좋은 질문을 만듭니다</p>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">03</div>
+                    <h3>경험 정리</h3>
+                    <p>나의 경험이 AI를 지휘하는 힘입니다</p>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">04</div>
+                    <h3>연결하기</h3>
+                    <p>지식을 연결해 인사이트를 만드세요</p>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-number">05</div>
+                    <h3>삶으로</h3>
+                    <p>결국 목회자는 삶으로 증거합니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>AI를 도구로, 영혼은 목회자의 것으로</h2>
+            <p>기술은 변해도 복음은 변하지 않습니다.<br>AI가 시간을 벌어주는 만큼, 더 깊은 관계와 영적 돌봄에 집중하세요.</p>
+            <a href="#how" class="btn btn-primary">지금 시작하기</a>
+        </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <p>목회자를 위한 AI 윤리와 지식관리 시스템</p>
-        <p style="margin-top: 0.5rem;">&copy; 2025 조성현. All rights reserved.</p>
+        <p class="footer-quote">"서로 사랑하라. 내가 너희를 사랑한 것 같이 너희도 서로 사랑하라."</p>
+        <p>© 2025 목회자를 위한 AI 지식관리 | 하나님 나라를 위한 도구로서의 AI</p>
     </footer>
 
     <script>
-        // Scroll Progress Bar
+        // Create stars
+        function createStars() {
+            const bg = document.getElementById('bgAnimation');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.height = star.style.width;
+                bg.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Scroll progress
         window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('progressBar').style.width = scrolled + '%';
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+
+            // Navbar background
+            const navbar = document.getElementById('navbar');
+            if (scrollTop > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
         });
 
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        // Active nav link
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
                 }
             });
         });
 
-        // Scroll Animation Observer
+        // Smooth scroll
+        document.querySelectorAll('nav a, .btn').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) translateX(0)';
+
+                    // For timeline items
+                    if (entry.target.classList.contains('timeline-item')) {
+                        entry.target.classList.add('visible');
+                    }
                 }
             });
-        }, { threshold: 0.1 });
+        }, observerOptions);
 
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        // Observe elements
+        document.querySelectorAll('.card, .comparison-card, .analogy-card, .agi-card, .poem-card, .summary-item, .speaker-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
+        });
+
+        document.querySelectorAll('.timeline-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+
+                    const updateCounter = () => {
+                        current += step;
+                        if (current < target) {
+                            counter.textContent = Math.floor(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.textContent = target;
+                        }
+                    };
+
+                    updateCounter();
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number[data-target]').forEach(counter => {
+            counterObserver.observe(counter);
+        });
+
+        // Parallax effect for orbs
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            document.querySelectorAll('.floating-orb').forEach((orb, index) => {
+                const speed = 0.05 * (index + 1);
+                orb.style.transform = `translateY(${scrollY * speed}px)`;
+            });
+        });
+
+        // Card tilt effect
+        document.querySelectorAll('.card, .analogy-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
         });
     </script>
 </body>
