@@ -2688,18 +2688,13 @@
                     return;
                 }
 
-                const resources = await Promise.all(
-                    result.items.map(async (itemRef) => {
-                        const metadata = await getMetadata(itemRef);
-                        return {
-                            name: itemRef.name,
-                            fullPath: itemRef.fullPath,
-                            size: metadata.size,
-                            updated: metadata.updated,
-                            customMetadata: metadata.customMetadata || {}
-                        };
-                    })
-                );
+                // 메타데이터 없이 파일 목록만 표시 (로그인 불필요)
+                const resources = result.items.map((itemRef) => {
+                    return {
+                        name: itemRef.name,
+                        fullPath: itemRef.fullPath
+                    };
+                });
 
                 renderResources(resources);
             } catch (error) {
@@ -2715,8 +2710,6 @@
         function renderResources(resources) {
             resourcesGrid.innerHTML = resources.map(resource => {
                 const fileType = getFileType(resource.name);
-                const description = resource.customMetadata.description || '옵시디언 활용을 위한 자료입니다.';
-                const tags = resource.customMetadata.tags ? resource.customMetadata.tags.split(',') : [fileType.category];
 
                 return `
                     <div class="resource-card">
@@ -2725,13 +2718,13 @@
                             <div class="resource-info">
                                 <h4>${resource.name}</h4>
                                 <div class="resource-meta">
-                                    <span>${formatFileSize(resource.size)}</span>
+                                    <span>${fileType.category}</span>
                                 </div>
                             </div>
                         </div>
-                        <p class="resource-description">${description}</p>
+                        <p class="resource-description">옵시디언 활용을 위한 자료입니다.</p>
                         <div class="resource-tags">
-                            ${tags.map(tag => `<span class="resource-tag">${tag.trim()}</span>`).join('')}
+                            <span class="resource-tag">${fileType.category}</span>
                         </div>
                         <button class="download-btn ${!currentUser ? 'login-required' : ''}"
                                 data-path="${resource.fullPath}"
