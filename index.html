@@ -503,7 +503,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
             margin-bottom: 24px;
             position: relative;
             z-index: 1;
@@ -635,8 +637,10 @@
         }
 
         .comparison-icon {
-            font-size: 48px;
+            font-size: 36px;
+            font-weight: 900;
             margin-bottom: 20px;
+            opacity: 0.9;
         }
 
         .comparison-card h3 {
@@ -839,14 +843,19 @@
         }
 
         .analogy-icon {
-            font-size: 56px;
+            font-size: 32px;
+            font-weight: 900;
             margin-bottom: 20px;
             display: block;
             transition: transform 0.3s;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .analogy-card:hover .analogy-icon {
-            transform: scale(1.2);
+            transform: scale(1.1);
         }
 
         .analogy-card h3 {
@@ -933,8 +942,13 @@
         }
 
         .agi-card .icon {
-            font-size: 40px;
+            font-size: 28px;
+            font-weight: 900;
             margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .agi-card h3 {
@@ -1522,8 +1536,17 @@
         }
 
         .success-message .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin: 0 auto 20px;
         }
 
         .success-message h4 {
@@ -1824,19 +1847,19 @@
                     <p class="speaker-title">전도사 · AI 지식관리 강사</p>
                     <ul class="speaker-credentials">
                         <li>
-                            <span class="icon">🎓</span>
+                            <span class="icon">—</span>
                             <span>영국 노팅엄대학교 조직신학 및 철학적 신학 석사</span>
                         </li>
                         <li>
-                            <span class="icon">🤖</span>
+                            <span class="icon">—</span>
                             <span>AI 윤리 연구</span>
                         </li>
                         <li>
-                            <span class="icon">⛪</span>
+                            <span class="icon">—</span>
                             <span>제네바한인교회 전도사</span>
                         </li>
                         <li>
-                            <span class="icon">👶</span>
+                            <span class="icon">—</span>
                             <span>어린이부, 청소년부 등 9년 사역 경험</span>
                         </li>
                     </ul>
@@ -1855,22 +1878,22 @@
             </div>
             <div class="cards-grid">
                 <div class="card">
-                    <div class="card-icon">📝</div>
+                    <div class="card-icon">01</div>
                     <h3>콘텐츠 창작자</h3>
                     <p>주일설교, 수요예배, 새벽기도, 성경공부... 목회자는 가장 많은 콘텐츠를 생성해내는 사람입니다. AI가 자료 정리를 도우면, 더 깊은 묵상에 집중할 수 있습니다.</p>
                 </div>
                 <div class="card">
-                    <div class="card-icon">🎯</div>
+                    <div class="card-icon">02</div>
                     <h3>맥락의 전문가</h3>
                     <p>성도의 삶의 현장, 가족 관계, 영적 여정을 가장 잘 이해하는 사람입니다. AI는 패턴을 찾지만, 맥락은 목회자만이 파악합니다.</p>
                 </div>
                 <div class="card">
-                    <div class="card-icon">💝</div>
+                    <div class="card-icon">03</div>
                     <h3>공감의 사람</h3>
                     <p>"지난번 기도제목은 어떻게 되었나요?" 한마디가 주는 위로는 AI가 대신할 수 없습니다. 공감은 인간 고유의 영역입니다.</p>
                 </div>
                 <div class="card">
-                    <div class="card-icon">✨</div>
+                    <div class="card-icon">04</div>
                     <h3>유니크한 아우라</h3>
                     <p>모나리자를 100만 장 복제해도 오리지널만 가치가 있듯, 목회자의 고유한 신앙 여정과 목회 경험은 대체 불가능한 "아우라"입니다.</p>
                 </div>
@@ -1913,27 +1936,27 @@
             </div>
             <div class="comparison-grid">
                 <div class="comparison-card ai">
-                    <div class="comparison-icon">🤖</div>
+                    <div class="comparison-icon">AI</div>
                     <h3>AI가 할 수 있는 것</h3>
                     <ul>
-                        <li><span class="icon">✓</span> 자료 수집과 정리</li>
-                        <li><span class="icon">✓</span> 패턴 분석과 검색</li>
-                        <li><span class="icon">✓</span> 초안 작성 보조</li>
-                        <li><span class="icon">✓</span> 일정 관리</li>
-                        <li><span class="icon">✓</span> 원어 분석</li>
-                        <li><span class="icon">✓</span> 주석서 요약</li>
+                        <li><span class="icon">+</span> 자료 수집과 정리</li>
+                        <li><span class="icon">+</span> 패턴 분석과 검색</li>
+                        <li><span class="icon">+</span> 초안 작성 보조</li>
+                        <li><span class="icon">+</span> 일정 관리</li>
+                        <li><span class="icon">+</span> 원어 분석</li>
+                        <li><span class="icon">+</span> 주석서 요약</li>
                     </ul>
                 </div>
                 <div class="comparison-card pastor">
-                    <div class="comparison-icon">👨‍⚖️</div>
+                    <div class="comparison-icon">P</div>
                     <h3>목회자만 할 수 있는 것</h3>
                     <ul>
-                        <li><span class="icon">♥</span> 영적 통찰과 분별</li>
-                        <li><span class="icon">♥</span> 공감과 사랑</li>
-                        <li><span class="icon">♥</span> 최종 판단</li>
-                        <li><span class="icon">♥</span> 삶으로 실천</li>
-                        <li><span class="icon">♥</span> 관계적 이해</li>
-                        <li><span class="icon">♥</span> 성령님의 인도</li>
+                        <li><span class="icon">→</span> 영적 통찰과 분별</li>
+                        <li><span class="icon">→</span> 공감과 사랑</li>
+                        <li><span class="icon">→</span> 최종 판단</li>
+                        <li><span class="icon">→</span> 삶으로 실천</li>
+                        <li><span class="icon">→</span> 관계적 이해</li>
+                        <li><span class="icon">→</span> 성령님의 인도</li>
                     </ul>
                 </div>
             </div>
@@ -2007,7 +2030,7 @@
             </div>
             <div class="analogy-grid">
                 <div class="analogy-card">
-                    <span class="analogy-icon">🎵</span>
+                    <span class="analogy-icon">01</span>
                     <h3>조율사와 연주자</h3>
                     <div class="role">
                         <div>
@@ -2021,7 +2044,7 @@
                     </div>
                 </div>
                 <div class="analogy-card">
-                    <span class="analogy-icon">👨‍🍳</span>
+                    <span class="analogy-icon">02</span>
                     <h3>보조 주방장과 셰프</h3>
                     <div class="role">
                         <div>
@@ -2035,7 +2058,7 @@
                     </div>
                 </div>
                 <div class="analogy-card">
-                    <span class="analogy-icon">🌱</span>
+                    <span class="analogy-icon">03</span>
                     <h3>정원 도구와 정원사</h3>
                     <div class="role">
                         <div>
@@ -2049,7 +2072,7 @@
                     </div>
                 </div>
                 <div class="analogy-card">
-                    <span class="analogy-icon">🏋️</span>
+                    <span class="analogy-icon">04</span>
                     <h3>트레이너와 운동하는 사람</h3>
                     <div class="role">
                         <div>
@@ -2081,11 +2104,11 @@
                     <p class="description">옵시디언의 기초부터 실전 활용까지. 메모 작성, 링크 연결, 그래프 뷰 등 핵심 기능을 익힙니다.</p>
                     <div class="course-info">
                         <div class="course-info-item">
-                            <span class="icon">📚</span>
+                            <span class="icon">—</span>
                             <span>4주 과정</span>
                         </div>
                         <div class="course-info-item">
-                            <span class="icon">📅</span>
+                            <span class="icon">—</span>
                             <span>일정: 추후 공지</span>
                         </div>
                     </div>
@@ -2101,11 +2124,11 @@
                     <p class="description">플러그인 활용, 템플릿 자동화, AI 연동 등 고급 기능을 마스터합니다.</p>
                     <div class="course-info">
                         <div class="course-info-item">
-                            <span class="icon">🚀</span>
+                            <span class="icon">—</span>
                             <span>4주 과정</span>
                         </div>
                         <div class="course-info-item">
-                            <span class="icon">📅</span>
+                            <span class="icon">—</span>
                             <span>일정: 추후 공지</span>
                         </div>
                     </div>
@@ -2141,22 +2164,22 @@
                 <p>범용 인공지능이 오면 무엇이 달라질까요?</p>
             </div>
             <div class="agi-warning">
-                <h3>⚠️ 5년 내 AGI 도래 예측</h3>
+                <h3>5년 내 AGI 도래 예측</h3>
                 <p>AGI는 인간의 모든 능력을 대체하는 기계입니다. 더 무서운 것은 자율성을 가질 수 있다는 점입니다.</p>
             </div>
             <div class="agi-content">
                 <div class="agi-card">
-                    <div class="icon">🏛️</div>
+                    <div class="icon">01</div>
                     <h3>로마 제국의 교훈</h3>
                     <p>로마는 노예 경제로 30-40% 실업률이 발생했습니다. 자아실현을 할 수 없는 시민들은 타인의 고통에서 쾌감을 찾았고, 콜로세움이 탄생했습니다. AI 시대에도 같은 위험이 있습니다.</p>
                 </div>
                 <div class="agi-card">
-                    <div class="icon">💬</div>
+                    <div class="icon">02</div>
                     <h3>현대판 콜로세움</h3>
                     <p>댓글 문화, 악플, 연예인 비난... 이미 우리 사회는 현대판 콜로세움의 조짐을 보이고 있습니다. 목회자는 성도들이 의미와 목적을 발견하도록 돕는 역할을 맡게 됩니다.</p>
                 </div>
                 <div class="agi-card">
-                    <div class="icon">🤝</div>
+                    <div class="icon">03</div>
                     <h3>서로에게 잘해야 하는 이유</h3>
                     <p>자율성을 가진 AGI가 등장하면, 인간들 사이의 갈등은 의미가 없어집니다. 우리는 "인간 vs 기계"의 구도를 경험할 첫 세대입니다. "서로 사랑하라"는 메시지가 더욱 절실해집니다.</p>
                 </div>
@@ -2366,7 +2389,7 @@
 
                 modalContent.innerHTML = `
                     <div class="success-message">
-                        <div class="icon">✅</div>
+                        <div class="icon">✓</div>
                         <h4>신청이 완료되었습니다!</h4>
                         <p>강의 일정이 확정되면 입력하신 이메일로 안내드리겠습니다.</p>
                     </div>
