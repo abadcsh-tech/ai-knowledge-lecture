@@ -652,16 +652,18 @@
         }
 
         .comparison-card.pastor {
-            background: linear-gradient(135deg, var(--primary) 0%, #9333ea 50%, var(--accent) 100%);
-            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.4);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(147, 51, 234, 0.1) 50%, rgba(244, 114, 182, 0.08) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.15);
         }
 
         .comparison-card.pastor::before {
-            background: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
         }
 
         .comparison-card.pastor:hover {
-            box-shadow: 0 30px 70px rgba(124, 58, 237, 0.5);
+            border-color: var(--primary);
+            box-shadow: 0 30px 70px rgba(124, 58, 237, 0.25);
         }
 
         .comparison-icon {
@@ -683,8 +685,7 @@
         }
 
         .comparison-card.pastor .comparison-icon {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
             font-size: 14px;
         }
@@ -723,11 +724,12 @@
         }
 
         .comparison-card.pastor li {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.15);
         }
 
         .comparison-card.pastor li:hover {
-            background: rgba(255, 255, 255, 0.18);
+            background: rgba(124, 58, 237, 0.18);
             transform: translateX(4px);
         }
 
@@ -753,7 +755,7 @@
         }
 
         .comparison-card.pastor li .icon {
-            background: rgba(255, 255, 255, 0.25);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
         }
 
