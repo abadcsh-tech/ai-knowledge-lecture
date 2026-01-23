@@ -619,11 +619,22 @@
             border-radius: 28px;
             padding: 48px;
             text-align: center;
-            transition: transform 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
         }
 
         .comparison-card:hover {
-            transform: scale(1.02);
+            transform: translateY(-8px);
         }
 
         .comparison-card.ai {
@@ -631,22 +642,58 @@
             border: 1px solid var(--glass-border);
         }
 
+        .comparison-card.ai::before {
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        .comparison-card.ai:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2);
+        }
+
         .comparison-card.pastor {
             background: linear-gradient(135deg, var(--primary) 0%, #9333ea 50%, var(--accent) 100%);
             box-shadow: 0 20px 60px rgba(124, 58, 237, 0.4);
         }
 
+        .comparison-card.pastor::before {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .comparison-card.pastor:hover {
+            box-shadow: 0 30px 70px rgba(124, 58, 237, 0.5);
+        }
+
         .comparison-icon {
-            font-size: 36px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            opacity: 0.9;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            border-radius: 20px;
+        }
+
+        .comparison-card.ai .comparison-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .comparison-card.pastor .comparison-icon {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
         }
 
         .comparison-card h3 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
+            letter-spacing: -0.02em;
         }
 
         .comparison-card ul {
@@ -655,40 +702,59 @@
         }
 
         .comparison-card li {
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 16px;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            font-size: 15px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: transform 0.3s;
+            gap: 14px;
+            transition: all 0.3s;
         }
 
-        .comparison-card li:hover {
-            transform: translateX(8px);
+        .comparison-card.ai li {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .comparison-card.ai li:hover {
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(4px);
+        }
+
+        .comparison-card.pastor li {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-card.pastor li:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateX(4px);
         }
 
         .comparison-card li:last-child {
-            border-bottom: none;
+            margin-bottom: 0;
         }
 
         .comparison-card li .icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
+            font-weight: 600;
             flex-shrink: 0;
         }
 
         .comparison-card.ai li .icon {
-            background: rgba(124, 58, 237, 0.2);
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
         }
 
         .comparison-card.pastor li .icon {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
         }
 
         /* Quote Section */
@@ -1948,7 +2014,7 @@
                     </ul>
                 </div>
                 <div class="comparison-card pastor">
-                    <div class="comparison-icon">P</div>
+                    <div class="comparison-icon">Pastor</div>
                     <h3>목회자만 할 수 있는 것</h3>
                     <ul>
                         <li><span class="icon">→</span> 영적 통찰과 분별</li>
@@ -2233,7 +2299,7 @@
     <!-- Footer -->
     <footer>
         <p class="footer-quote">"서로 사랑하라. 내가 너희를 사랑한 것 같이 너희도 서로 사랑하라."</p>
-        <p>© 2025 목회자를 위한 AI 지식관리 | 하나님 나라를 위한 도구로서의 AI</p>
+        <p>© 2026 목회자를 위한 AI 지식관리 | 하나님 나라를 위한 도구로서의 AI</p>
     </footer>
 
     <!-- Firebase SDK -->
