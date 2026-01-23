@@ -1108,6 +1108,148 @@
             margin-right: auto;
         }
 
+        /* Resources Section */
+        .resources-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .resource-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resource-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
+        }
+
+        .resource-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .resource-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .resource-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .resource-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .resource-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .resource-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .resource-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .resource-tag {
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .download-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .download-btn.login-required:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: var(--primary);
+        }
+
+        .resources-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .resources-empty p {
+            font-size: 16px;
+        }
+
+        .resources-loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
         /* Footer */
         footer {
             background: var(--bg-darker);
@@ -1820,10 +1962,9 @@
                 <li><a href="#home" class="active">홈</a></li>
                 <li><a href="#speaker">강사</a></li>
                 <li><a href="#why">왜 AI인가</a></li>
-                <li><a href="#comparison">AI vs 목회자</a></li>
                 <li><a href="#how">활용법</a></li>
                 <li><a href="#courses">강의신청</a></li>
-                <li><a href="#agi">AGI 시대</a></li>
+                <li><a href="#resources">자료실</a></li>
             </ul>
             <div class="auth-container logged-out" id="authContainer">
                 <button class="auth-btn login-btn" id="loginBtn">
@@ -2289,6 +2430,22 @@
         </div>
     </section>
 
+    <!-- Resources Section -->
+    <section class="resources-section" id="resources">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Resources</span>
+                <h2>자료실</h2>
+                <p>옵시디언 템플릿, 플러그인 설정, 자동화 코드를 다운로드하세요</p>
+            </div>
+            <div class="resources-grid" id="resourcesGrid">
+                <div class="resources-loading">
+                    <p>자료를 불러오는 중...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Final CTA -->
     <section class="final-cta">
         <div class="container">
@@ -2309,7 +2466,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
         import { getAuth, signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        import { getStorage, ref, listAll, getDownloadURL, getMetadata } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-storage.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -2328,6 +2486,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+        const storage = getStorage(app);
 
         // Current user state
         let currentUser = null;
@@ -2489,6 +2648,145 @@
         enrollModal.addEventListener('click', (e) => {
             if (e.target === enrollModal) closeModal();
         });
+
+        // Resources Section
+        const resourcesGrid = document.getElementById('resourcesGrid');
+
+        // File type icons and categories
+        const fileTypes = {
+            'md': { icon: 'MD', category: '템플릿' },
+            'json': { icon: 'JS', category: '설정' },
+            'js': { icon: 'JS', category: '코드' },
+            'css': { icon: 'CS', category: '스타일' },
+            'zip': { icon: 'ZIP', category: '압축파일' },
+            'pdf': { icon: 'PDF', category: '문서' },
+            'default': { icon: 'FILE', category: '파일' }
+        };
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return fileTypes[ext] || fileTypes['default'];
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        async function loadResources() {
+            try {
+                const resourcesRef = ref(storage, 'resources');
+                const result = await listAll(resourcesRef);
+
+                if (result.items.length === 0) {
+                    resourcesGrid.innerHTML = `
+                        <div class="resources-empty">
+                            <p>아직 등록된 자료가 없습니다.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const resources = await Promise.all(
+                    result.items.map(async (itemRef) => {
+                        const metadata = await getMetadata(itemRef);
+                        return {
+                            name: itemRef.name,
+                            fullPath: itemRef.fullPath,
+                            size: metadata.size,
+                            updated: metadata.updated,
+                            customMetadata: metadata.customMetadata || {}
+                        };
+                    })
+                );
+
+                renderResources(resources);
+            } catch (error) {
+                console.error('자료 로드 오류:', error);
+                resourcesGrid.innerHTML = `
+                    <div class="resources-empty">
+                        <p>자료를 불러오는 중 오류가 발생했습니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderResources(resources) {
+            resourcesGrid.innerHTML = resources.map(resource => {
+                const fileType = getFileType(resource.name);
+                const description = resource.customMetadata.description || '옵시디언 활용을 위한 자료입니다.';
+                const tags = resource.customMetadata.tags ? resource.customMetadata.tags.split(',') : [fileType.category];
+
+                return `
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon">${fileType.icon}</div>
+                            <div class="resource-info">
+                                <h4>${resource.name}</h4>
+                                <div class="resource-meta">
+                                    <span>${formatFileSize(resource.size)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="resource-description">${description}</p>
+                        <div class="resource-tags">
+                            ${tags.map(tag => `<span class="resource-tag">${tag.trim()}</span>`).join('')}
+                        </div>
+                        <button class="download-btn ${!currentUser ? 'login-required' : ''}"
+                                data-path="${resource.fullPath}"
+                                onclick="downloadResource(this)">
+                            ${currentUser ? '↓ 다운로드' : '로그인 후 다운로드'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Make downloadResource globally accessible
+        window.downloadResource = async function(btn) {
+            if (!currentUser) {
+                const user = await handleLogin();
+                if (user) {
+                    loadResources(); // Refresh to update buttons
+                }
+                return;
+            }
+
+            const path = btn.dataset.path;
+            btn.disabled = true;
+            btn.textContent = '다운로드 중...';
+
+            try {
+                const fileRef = ref(storage, path);
+                const url = await getDownloadURL(fileRef);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = path.split('/').pop();
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                btn.textContent = '↓ 다운로드';
+            } catch (error) {
+                console.error('다운로드 오류:', error);
+                alert('다운로드 중 오류가 발생했습니다.');
+                btn.textContent = '↓ 다운로드';
+            }
+            btn.disabled = false;
+        };
+
+        // Update resources when auth state changes
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            // ... existing auth UI code runs first, then refresh resources
+            setTimeout(() => loadResources(), 100);
+        });
+
+        // Initial load
+        loadResources();
     </script>
 
     <script>
