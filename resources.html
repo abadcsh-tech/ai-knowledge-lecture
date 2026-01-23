@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자료실 - 목회자를 위한 AI 지식관리</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --primary-light: #a78bfa;
+            --primary-lighter: #ddd6fe;
+            --accent: #f472b6;
+            --accent-blue: #38bdf8;
+            --bg-dark: #0f0a1f;
+            --bg-darker: #080510;
+            --text-light: #f5f3ff;
+            --text-muted: #a5b4fc;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 25s infinite;
+        }
+
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(124, 58, 237, 0.15);
+            top: 10%;
+            left: -10%;
+        }
+
+        .orb2 {
+            width: 600px;
+            height: 600px;
+            background: rgba(244, 114, 182, 0.1);
+            bottom: 10%;
+            right: -15%;
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, 50px) scale(1.1); }
+            50% { transform: translate(50px, 100px) scale(0.9); }
+            75% { transform: translate(-50px, 50px) scale(1.05); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(15, 10, 31, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 400;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-light);
+            background: var(--glass);
+        }
+
+        nav a.active {
+            color: var(--text-light);
+            background: var(--primary);
+        }
+
+        .login-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(36px, 6vw, 52px);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Resources Tabs */
+        .resources-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .resources-tab {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 14px 28px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resources-tab:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: var(--primary);
+            color: var(--text-light);
+        }
+
+        .resources-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .tab-icon {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .resources-tab:not(.active) .tab-icon {
+            background: rgba(124, 58, 237, 0.3);
+        }
+
+        .tab-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .resources-tab:not(.active) .tab-count {
+            background: rgba(124, 58, 237, 0.3);
+        }
+
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .resource-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
+        }
+
+        .resource-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .resource-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .resource-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .resource-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+
+        .resource-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .resource-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .resource-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .resource-tag {
+            background: rgba(124, 58, 237, 0.2);
+            color: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .download-btn.login-required {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Empty State */
+        .resources-empty {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--text-muted);
+        }
+
+        .resources-loading {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resources-tabs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .resources-tab {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation">
+        <div class="floating-orb orb1"></div>
+        <div class="floating-orb orb2"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">AI 지식관리</a>
+            <ul>
+                <li><a href="index.html">홈</a></li>
+                <li><a href="index.html#about">소개</a></li>
+                <li><a href="index.html#instructor">강사</a></li>
+                <li><a href="index.html#courses">강의</a></li>
+                <li><a href="resources.html" class="active">자료실</a></li>
+                <li><a href="qna.html">Q&A</a></li>
+            </ul>
+            <div id="authArea">
+                <button class="login-btn" id="loginBtn">로그인</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <span class="page-badge">Resources</span>
+                <h1>자료실</h1>
+                <p>옵시디언 활용을 위한 다양한 템플릿, 프롬프트, 세팅 파일을 제공합니다</p>
+            </div>
+
+            <div class="resources-tabs" id="resourcesTabs">
+                <button class="resources-tab active" data-category="templates">
+                    <span class="tab-icon">T</span>
+                    템플릿
+                    <span class="tab-count" id="countTemplates">0</span>
+                </button>
+                <button class="resources-tab" data-category="prompts">
+                    <span class="tab-icon">P</span>
+                    프롬프트
+                    <span class="tab-count" id="countPrompts">0</span>
+                </button>
+                <button class="resources-tab" data-category="settings">
+                    <span class="tab-icon">S</span>
+                    세팅값
+                    <span class="tab-count" id="countSettings">0</span>
+                </button>
+            </div>
+
+            <div class="resources-grid" id="resourcesGrid">
+                <div class="resources-loading">
+                    <p>자료를 불러오는 중...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 목회자를 위한 AI 지식관리. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6PPhUNl9wEKVTp9d-NvFNb6z4y8UMmO8",
+            authDomain: "aiforpastor.firebaseapp.com",
+            projectId: "aiforpastor",
+            storageBucket: "aiforpastor.firebasestorage.app",
+            messagingSenderId: "548243153264",
+            appId: "1:548243153264:web:4598b6e28cbe7fc9566fb5",
+            measurementId: "G-5HY0HMZZTC"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+        const provider = new GoogleAuthProvider();
+
+        let currentUser = null;
+
+        // Auth UI
+        const authArea = document.getElementById('authArea');
+        const loginBtn = document.getElementById('loginBtn');
+
+        loginBtn.addEventListener('click', handleLogin);
+
+        async function handleLogin() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                return result.user;
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                return null;
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                authArea.innerHTML = `
+                    <div class="user-info">
+                        <span class="user-name">${user.displayName || user.email}</span>
+                        <button class="logout-btn" id="logoutBtn">로그아웃</button>
+                    </div>
+                `;
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    signOut(auth);
+                });
+            } else {
+                authArea.innerHTML = `<button class="login-btn" id="loginBtn">로그인</button>`;
+                document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            }
+            setTimeout(() => loadResources(), 100);
+        });
+
+        // Resources
+        const resourcesGrid = document.getElementById('resourcesGrid');
+        const resourcesTabs = document.querySelectorAll('.resources-tab');
+        let currentCategory = 'templates';
+        let allResources = {
+            templates: [],
+            prompts: [],
+            settings: []
+        };
+
+        const categories = {
+            templates: { name: '템플릿', folder: 'templates' },
+            prompts: { name: '프롬프트', folder: 'prompts' },
+            settings: { name: '세팅값', folder: 'settings' }
+        };
+
+        const fileTypes = {
+            'md': { icon: 'MD' },
+            'json': { icon: 'JSON' },
+            'js': { icon: 'JS' },
+            'css': { icon: 'CSS' },
+            'zip': { icon: 'ZIP' },
+            'pdf': { icon: 'PDF' },
+            'txt': { icon: 'TXT' },
+            'default': { icon: 'FILE' }
+        };
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return fileTypes[ext] || fileTypes['default'];
+        }
+
+        resourcesTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                resourcesTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentCategory = tab.dataset.category;
+                renderResources(allResources[currentCategory]);
+            });
+        });
+
+        async function loadResources() {
+            try {
+                for (const [key, config] of Object.entries(categories)) {
+                    const categoryRef = ref(storage, `resources/${config.folder}`);
+                    try {
+                        const result = await listAll(categoryRef);
+                        allResources[key] = result.items.map(itemRef => ({
+                            name: itemRef.name,
+                            fullPath: itemRef.fullPath
+                        }));
+                    } catch (e) {
+                        allResources[key] = [];
+                    }
+                }
+
+                document.getElementById('countTemplates').textContent = allResources.templates.length;
+                document.getElementById('countPrompts').textContent = allResources.prompts.length;
+                document.getElementById('countSettings').textContent = allResources.settings.length;
+
+                renderResources(allResources[currentCategory]);
+            } catch (error) {
+                console.error('자료 로드 오류:', error);
+                resourcesGrid.innerHTML = `
+                    <div class="resources-empty">
+                        <p>자료를 불러오는 중 오류가 발생했습니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderResources(resources) {
+            if (resources.length === 0) {
+                resourcesGrid.innerHTML = `
+                    <div class="resources-empty">
+                        <p>아직 등록된 자료가 없습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const categoryName = categories[currentCategory].name;
+            resourcesGrid.innerHTML = resources.map(resource => {
+                const fileType = getFileType(resource.name);
+
+                return `
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon">${fileType.icon}</div>
+                            <div class="resource-info">
+                                <h4>${resource.name}</h4>
+                                <div class="resource-meta">
+                                    <span>${categoryName}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="resource-description">옵시디언 활용을 위한 ${categoryName} 자료입니다.</p>
+                        <div class="resource-tags">
+                            <span class="resource-tag">${categoryName}</span>
+                        </div>
+                        <button class="download-btn ${!currentUser ? 'login-required' : ''}"
+                                data-path="${resource.fullPath}"
+                                onclick="downloadResource(this)">
+                            ${currentUser ? '↓ 다운로드' : '로그인 후 다운로드'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.downloadResource = async function(btn) {
+            if (!currentUser) {
+                const user = await handleLogin();
+                if (user) {
+                    loadResources();
+                }
+                return;
+            }
+
+            const path = btn.dataset.path;
+            btn.disabled = true;
+            btn.textContent = '다운로드 중...';
+
+            try {
+                const fileRef = ref(storage, path);
+                const url = await getDownloadURL(fileRef);
+                const fileName = path.split('/').pop();
+
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+
+                btn.textContent = '↓ 다운로드';
+            } catch (error) {
+                console.error('다운로드 오류:', error);
+                alert('다운로드 중 오류가 발생했습니다.');
+                btn.textContent = '↓ 다운로드';
+            }
+            btn.disabled = false;
+        };
+
+        loadResources();
+    </script>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const bg = document.getElementById('bgAnimation');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.height = star.style.width;
+                bg.appendChild(star);
+            }
+        }
+        createStars();
+    </script>
+</body>
+</html>

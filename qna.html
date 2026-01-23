@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A - 목회자를 위한 AI 지식관리</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --primary-light: #a78bfa;
+            --primary-lighter: #ddd6fe;
+            --accent: #f472b6;
+            --accent-blue: #38bdf8;
+            --bg-dark: #0f0a1f;
+            --bg-darker: #080510;
+            --text-light: #f5f3ff;
+            --text-muted: #a5b4fc;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 25s infinite;
+        }
+
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(124, 58, 237, 0.15);
+            top: 10%;
+            left: -10%;
+        }
+
+        .orb2 {
+            width: 600px;
+            height: 600px;
+            background: rgba(244, 114, 182, 0.1);
+            bottom: 10%;
+            right: -15%;
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, 50px) scale(1.1); }
+            50% { transform: translate(50px, 100px) scale(0.9); }
+            75% { transform: translate(-50px, 50px) scale(1.05); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(15, 10, 31, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 400;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-light);
+            background: var(--glass);
+        }
+
+        nav a.active {
+            color: var(--text-light);
+            background: var(--primary);
+        }
+
+        .login-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(36px, 6vw, 52px);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* QnA Header */
+        .qna-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .qna-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .write-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .write-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        /* QnA List */
+        .qna-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .qna-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .qna-item:hover {
+            border-color: var(--primary);
+        }
+
+        .qna-question {
+            padding: 24px;
+            cursor: pointer;
+        }
+
+        .qna-question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .qna-title {
+            font-size: 17px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .qna-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .qna-status.waiting {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .qna-status.answered {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .qna-content {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .qna-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .qna-answer {
+            background: rgba(124, 58, 237, 0.05);
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .qna-item.expanded .qna-answer {
+            padding: 24px;
+            max-height: 500px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .qna-item.expanded .qna-content {
+            -webkit-line-clamp: unset;
+        }
+
+        .qna-answer-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 12px;
+        }
+
+        .qna-answer-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        .qna-answer-form textarea {
+            width: 100%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-light);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 12px;
+        }
+
+        .qna-answer-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .qna-empty {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--text-muted);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text-light);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-required-msg {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .login-required-msg p {
+            margin-bottom: 20px;
+            color: var(--text-muted);
+        }
+
+        .login-required-msg button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-message .icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+            color: white;
+        }
+
+        .success-message h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .success-message p {
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .qna-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+
+            .qna-question-header {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation">
+        <div class="floating-orb orb1"></div>
+        <div class="floating-orb orb2"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">AI 지식관리</a>
+            <ul>
+                <li><a href="index.html">홈</a></li>
+                <li><a href="index.html#about">소개</a></li>
+                <li><a href="index.html#instructor">강사</a></li>
+                <li><a href="index.html#courses">강의</a></li>
+                <li><a href="resources.html">자료실</a></li>
+                <li><a href="qna.html" class="active">Q&A</a></li>
+            </ul>
+            <div id="authArea">
+                <button class="login-btn" id="loginBtn">로그인</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <span class="page-badge">Q&A</span>
+                <h1>질문 게시판</h1>
+                <p>강의 관련 질문을 남겨주시면 답변해 드립니다</p>
+            </div>
+
+            <div class="qna-header">
+                <h3>질문 목록</h3>
+                <button class="write-btn" id="writeQuestionBtn">
+                    + 질문하기
+                </button>
+            </div>
+
+            <div class="qna-list" id="qnaList">
+                <div class="qna-empty">
+                    <p>아직 등록된 질문이 없습니다.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 목회자를 위한 AI 지식관리. All rights reserved.</p>
+    </footer>
+
+    <!-- Question Modal -->
+    <div class="modal-overlay" id="qnaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="qnaModalTitle">질문하기</h3>
+                <button class="modal-close" id="qnaModalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="qnaModalContent">
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6PPhUNl9wEKVTp9d-NvFNb6z4y8UMmO8",
+            authDomain: "aiforpastor.firebaseapp.com",
+            projectId: "aiforpastor",
+            storageBucket: "aiforpastor.firebasestorage.app",
+            messagingSenderId: "548243153264",
+            appId: "1:548243153264:web:4598b6e28cbe7fc9566fb5",
+            measurementId: "G-5HY0HMZZTC"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        let currentUser = null;
+        const ADMIN_EMAIL = 'abadcsh@gmail.com';
+
+        // Auth UI
+        const authArea = document.getElementById('authArea');
+        const loginBtn = document.getElementById('loginBtn');
+
+        loginBtn.addEventListener('click', handleLogin);
+
+        async function handleLogin() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                return result.user;
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                return null;
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                authArea.innerHTML = `
+                    <div class="user-info">
+                        <span class="user-name">${user.displayName || user.email}</span>
+                        <button class="logout-btn" id="logoutBtn">로그아웃</button>
+                    </div>
+                `;
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    signOut(auth);
+                });
+            } else {
+                authArea.innerHTML = `<button class="login-btn" id="loginBtn">로그인</button>`;
+                document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            }
+            loadQuestions();
+        });
+
+        // QnA
+        const qnaList = document.getElementById('qnaList');
+        const qnaModal = document.getElementById('qnaModal');
+        const qnaModalTitle = document.getElementById('qnaModalTitle');
+        const qnaModalContent = document.getElementById('qnaModalContent');
+        const qnaModalClose = document.getElementById('qnaModalClose');
+        const writeQuestionBtn = document.getElementById('writeQuestionBtn');
+
+        writeQuestionBtn.addEventListener('click', () => {
+            if (!currentUser) {
+                qnaModalTitle.textContent = '로그인 필요';
+                qnaModalContent.innerHTML = `
+                    <div class="login-required-msg">
+                        <p>질문을 작성하려면 로그인이 필요합니다.</p>
+                        <button id="qnaLoginBtn">Google로 로그인</button>
+                    </div>
+                `;
+                document.getElementById('qnaLoginBtn').addEventListener('click', async () => {
+                    const user = await handleLogin();
+                    if (user) {
+                        showQuestionForm();
+                    }
+                });
+            } else {
+                showQuestionForm();
+            }
+            qnaModal.classList.add('active');
+        });
+
+        function showQuestionForm() {
+            qnaModalTitle.textContent = '질문하기';
+            qnaModalContent.innerHTML = `
+                <form id="questionForm">
+                    <div class="form-group">
+                        <label for="questionTitle">제목</label>
+                        <input type="text" id="questionTitle" placeholder="질문 제목을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="questionContent">내용</label>
+                        <textarea id="questionContent" placeholder="질문 내용을 자세히 작성해주세요" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">질문 등록</button>
+                </form>
+            `;
+            document.getElementById('questionForm').addEventListener('submit', handleQuestionSubmit);
+        }
+
+        async function handleQuestionSubmit(e) {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '등록 중...';
+
+            const questionData = {
+                title: document.getElementById('questionTitle').value,
+                content: document.getElementById('questionContent').value,
+                authorName: currentUser.displayName || '익명',
+                authorEmail: currentUser.email,
+                authorId: currentUser.uid,
+                answer: null,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, 'questions'), questionData);
+                qnaModalContent.innerHTML = `
+                    <div class="success-message">
+                        <div class="icon">✓</div>
+                        <h4>질문이 등록되었습니다!</h4>
+                        <p>답변이 등록되면 확인하실 수 있습니다.</p>
+                    </div>
+                `;
+                setTimeout(() => {
+                    closeQnaModal();
+                    loadQuestions();
+                }, 2000);
+            } catch (error) {
+                console.error('질문 등록 오류:', error);
+                alert('질문 등록 중 오류가 발생했습니다.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '질문 등록';
+            }
+        }
+
+        function closeQnaModal() {
+            qnaModal.classList.remove('active');
+        }
+
+        qnaModalClose.addEventListener('click', closeQnaModal);
+        qnaModal.addEventListener('click', (e) => {
+            if (e.target === qnaModal) closeQnaModal();
+        });
+
+        async function loadQuestions() {
+            try {
+                const q = query(collection(db, 'questions'), orderBy('createdAt', 'desc'), limit(50));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    qnaList.innerHTML = `
+                        <div class="qna-empty">
+                            <p>아직 등록된 질문이 없습니다.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                qnaList.innerHTML = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('ko-KR') : '';
+                    const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+
+                    return `
+                        <div class="qna-item" data-id="${doc.id}">
+                            <div class="qna-question" onclick="toggleQna('${doc.id}')">
+                                <div class="qna-question-header">
+                                    <span class="qna-title">${escapeHtml(data.title)}</span>
+                                    <span class="qna-status ${data.answer ? 'answered' : 'waiting'}">
+                                        ${data.answer ? '답변완료' : '답변대기'}
+                                    </span>
+                                </div>
+                                <p class="qna-content">${escapeHtml(data.content)}</p>
+                                <div class="qna-meta">
+                                    <span>${escapeHtml(data.authorName)}</span>
+                                    <span>${date}</span>
+                                </div>
+                            </div>
+                            <div class="qna-answer">
+                                ${data.answer ? `
+                                    <div class="qna-answer-label">→ 답변</div>
+                                    <div class="qna-answer-content">${escapeHtml(data.answer)}</div>
+                                ` : isAdmin ? `
+                                    <div class="qna-answer-form">
+                                        <textarea id="answer-${doc.id}" placeholder="답변을 입력하세요"></textarea>
+                                        <button class="submit-btn" onclick="submitAnswer('${doc.id}')">답변 등록</button>
+                                    </div>
+                                ` : `
+                                    <p style="color: var(--text-muted); font-size: 14px;">아직 답변이 등록되지 않았습니다.</p>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('질문 로드 오류:', error);
+                qnaList.innerHTML = `
+                    <div class="qna-empty">
+                        <p>질문을 불러오는 중 오류가 발생했습니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.toggleQna = function(id) {
+            const item = document.querySelector(`.qna-item[data-id="${id}"]`);
+            item.classList.toggle('expanded');
+        };
+
+        window.submitAnswer = async function(questionId) {
+            const textarea = document.getElementById(`answer-${questionId}`);
+            const answer = textarea.value.trim();
+            if (!answer) {
+                alert('답변을 입력해주세요.');
+                return;
+            }
+
+            const btn = textarea.nextElementSibling;
+            btn.disabled = true;
+            btn.textContent = '등록 중...';
+
+            try {
+                await updateDoc(doc(db, 'questions', questionId), {
+                    answer: answer,
+                    answeredAt: serverTimestamp()
+                });
+                loadQuestions();
+            } catch (error) {
+                console.error('답변 등록 오류:', error);
+                alert('답변 등록 중 오류가 발생했습니다.');
+                btn.disabled = false;
+                btn.textContent = '답변 등록';
+            }
+        };
+
+        loadQuestions();
+    </script>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const bg = document.getElementById('bgAnimation');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.height = star.style.width;
+                bg.appendChild(star);
+            }
+        }
+        createStars();
+    </script>
+</body>
+</html>
